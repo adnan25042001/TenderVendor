@@ -10,7 +10,7 @@ import com.tendervendor.utility.DBUtil;
 public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 
 	@Override
-	 public String loginAdmin(String username, String password) throws SQLException {
+	public String loginAdmin(String username, String password) throws SQLException {
 		String msg = "Invalid username or password";
 
 		try (Connection conn = DBUtil.provideConnection()) {
