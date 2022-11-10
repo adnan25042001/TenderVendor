@@ -1,23 +1,17 @@
 package com.tendervendor.usecases;
 
-import java.util.List;
-
-import com.tendervendor.dao.TenderDao;
-import com.tendervendor.dao.TenderDaoImpl;
-import com.tendervendor.exception.TenderException;
-import com.tendervendor.model.Tender;
-
 public class Demo {
+
 	public static void main(String[] args) {
+
+		System.out.println("1 : Login as Admin");
+		System.out.println("2: Login as Vendor");
+		System.out.println("3 : Don't have account signup");
+		System.out.println("4 : Exit");
 		
-		TenderDao tdao = new TenderDaoImpl();
+		LoginSignup ls = new LoginSignup();
 		
-		try {
-			List<Tender> tenders =  tdao.getAllTenders();
-			tenders.forEach(t -> System.out.println(t));
-		} catch (TenderException e) {
-			e.printStackTrace();
-		}
-		
+		ls.logSign();
+
 	}
 }
