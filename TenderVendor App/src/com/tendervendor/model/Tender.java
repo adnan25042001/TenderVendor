@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Tender {
 
-	private int tid;
+	private String tid;
 	private String tname;
 	private String ttype;
 	private int tprice;
@@ -18,7 +18,7 @@ public class Tender {
 		super();
 	}
 
-	public Tender(int tid, String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc) {
+	public Tender(String tid, String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc) {
 		super();
 		this.tid = tid;
 		this.tname = tname;
@@ -37,11 +37,11 @@ public class Tender {
 		this.tdesc = tdesc;
 	}
 
-	public int getTid() {
+	public String getTid() {
 		return tid;
 	}
 
-	public void setTid(int tid) {
+	public void setTid(String tid) {
 		this.tid = tid;
 	}
 
@@ -96,8 +96,8 @@ public class Tender {
 	@Override
 	public String toString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return "Tender [tid=" + tid + ", tname=" + tname + ", ttype=" + ttype + ", tprice=" + tprice + ", tlocation="
-				+ tlocation + ", tdeadline=" + sdf.format(tdeadline) + ", tdesc=" + tdesc + "]";
+		return "Tender [TenderId=" + tid + ", Name=" + tname + ", Type=" + ttype + ", Price=" + tprice + ", Location="
+				+ tlocation + ", Deadline=" + sdf.format(tdeadline) + ", Description=" + tdesc + "]";
 	}
 
 }

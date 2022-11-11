@@ -14,56 +14,58 @@ import com.tendervendor.exception.TenderException;
 import com.tendervendor.model.Tender;
 import com.tendervendor.model.TenderStatus;
 import com.tendervendor.utility.DBUtil;
+import com.tendervendor.utility.IDUtil;
 
 public class TenderDaoImpl implements TenderDao {
 
 	@Override
-	public String addTender(Tender tender) throws TenderException {
-		String msg = "Tender not added...";
+	public boolean addTender(Tender tender) throws TenderException {
+		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"insert into tender(tname,ttype,tprice,tlocation,tdeadline,tdesc) values(?,?,?,?,?,?)");
-
-			ps.setString(1, tender.getTname());
-			ps.setString(2, tender.getTtype());
-			ps.setInt(3, tender.getTprice());
-			ps.setString(4, tender.getTlocation());
+					"insert into tender(tid,tname,ttype,tprice,tlocation,tdeadline,tdesc) values(?,?,?,?,?,?,?)");
+			
+			ps.setString(1, IDUtil.generateId());
+			ps.setString(2, tender.getTname());
+			ps.setString(3, tender.getTtype());
+			ps.setInt(4, tender.getTprice());
+			ps.setString(5, tender.getTlocation());
 
 			Date d = tender.getTdeadline();
 			java.sql.Date dl = new java.sql.Date(d.getTime());
-			ps.setDate(5, dl);
+			ps.setDate(6, dl);
 
-			ps.setString(6, tender.getTdesc());
+			ps.setString(7, tender.getTdesc());
 
 			int n = ps.executeUpdate();
 
 			if (n > 0)
-				msg = "Tendert submitted successfully...";
+				flag = true;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			msg = e.getMessage();
 		}
 
-		return msg;
+		return flag;
 	}
 
 	@Override
-	public String addTender(String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc)
+	public boolean addTender(String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc)
 			throws TenderException {
-		String msg = "Tender not added...";
+		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"insert into tender(tname,ttype,tprice,tlocation,tdeadline,tdesc) values(?,?,?,?,?,?)");
-
-			ps.setString(1, tname);
-			ps.setString(2, ttype);
-			ps.setInt(3, tprice);
-			ps.setString(4, tlocation);
+					"insert into tender(tid,tname,ttype,tprice,tlocation,tdeadline,tdesc) values(?,?,?,?,?,?,?)");
+			
+			ps.setString(1, IDUtil.generateId());
+			ps.setString(2, tname);
+			ps.setString(3, ttype);
+			ps.setInt(4, tprice);
+			ps.setString(5, tlocation);
 
 			Date d = null;
 			try {
@@ -74,21 +76,20 @@ public class TenderDaoImpl implements TenderDao {
 
 			java.sql.Date dl = new java.sql.Date(d.getTime());
 
-			ps.setDate(5, dl);
+			ps.setDate(6, dl);
 
-			ps.setString(6, tdesc);
+			ps.setString(7, tdesc);
 
 			int n = ps.executeUpdate();
 
 			if (n > 0)
-				msg = "Tendert submitted successfully...";
+				flag = true;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			msg = e.getMessage();
 		}
 
-		return msg;
+		return flag;
 	}
 
 	@Override
@@ -103,7 +104,7 @@ public class TenderDaoImpl implements TenderDao {
 
 			while (rs.next()) {
 
-				int tid = rs.getInt("tid");
+				String tid = rs.getString("tid");
 				String tname = rs.getString("tname");
 				String ttype = rs.getString("ttype");
 				int tprice = rs.getInt("tprice");
@@ -131,29 +132,83 @@ public class TenderDaoImpl implements TenderDao {
 	}
 
 	@Override
-	public List<TenderStatus> getAllAcceptedTenders() throws TenderException {
+	public Tender getTenderById(String tid) throws TenderException {
+		Tender tender = null;
+
+		try (Connection conn = DBUtil.provideConnection()) {
+
+			PreparedStatement ps = conn.prepareStatement("select * from tender where tid = ?");
+			
+			ps.setString(1, tid);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				String id = rs.getString("tid");
+				String tname = rs.getString("tname");
+				String ttype = rs.getString("ttype");
+				int tprice = rs.getInt("tprice");
+				String tlocation = rs.getString("tlocation");
+
+				java.sql.Date d = rs.getDate("tdeadline");
+				String tdeadline = d.toString();
+
+				String tdesc = rs.getString("tdesc");
+
+				tender = new Tender(id, tname, ttype, tprice, tlocation, tdeadline, tdesc);
+
+			}
+
+		} catch (SQLException e) {
+			throw new TenderException(e.getMessage());
+		}
+
+		return tender;
+	}
+
+	@Override
+	public boolean removeTenderById(String tid) throws TenderException {
+		boolean flag = false;
+
+		try (Connection conn = DBUtil.provideConnection()) {
+
+			PreparedStatement ps = conn.prepareStatement("delete from tender where tid = ?");
+			ps.setString(1, tid);
+
+			int n = ps.executeUpdate();
+
+			if (n > 0) {
+				
+				flag = true;
+
+			}
+
+		} catch (SQLException e) {
+			throw new TenderException(e.getMessage());
+		}
+
+		return flag;
+	}
+
+	@Override
+	public List<TenderStatus> getAllAssignedTender() throws TenderException {
 		List<TenderStatus> tenders = new ArrayList<>();
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement(
-					"select t.tid, t.tname, t.ttype, t.tprice, t.tlocation, t.tdeadline, t.tdesc, ts.status from tender t inner join tender_statusc ts ON t.tid = ts.tid");
+			PreparedStatement ps = conn.prepareStatement("select * from tender_status");
 
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 
-				int tid = rs.getInt("tid");
-				String tname = rs.getString("tname");
-				String ttype = rs.getString("ttype");
-				int tprice = rs.getInt("tprice");
-				String tlocation = rs.getString("tlocation");
-				java.sql.Date d = rs.getDate("tdeadline");
-				String tdeadline = d.toString();
-				String tdesc = rs.getString("tdesc");
+				String tid = rs.getString("tid");
+				String bid = rs.getString("bid");
+				String vid = rs.getString("vid");
 				String status = rs.getString("status");
 
-				TenderStatus tender = new TenderStatus(tid, tname, ttype, tprice, tlocation, tdeadline, tdesc, status);
+				TenderStatus tender = new TenderStatus(tid, bid, vid, status);
 
 				tenders.add(tender);
 			}
@@ -170,29 +225,29 @@ public class TenderDaoImpl implements TenderDao {
 	}
 
 	@Override
-	public List<TenderStatus> getAllRejectedTenders() throws TenderException {
-		List<TenderStatus> tenders = new ArrayList<>();
+	public List<Tender> getAllPendingTender() throws TenderException {
+		List<Tender> tenders = new ArrayList<>();
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement(
-					"select t.tid, t.tname, t.ttype, t.tprice, t.tlocation, t.tdeadline, t.tdesc, ts.status from tender t inner join tender_statusc ts ON t.tid = ts.tid");
+			PreparedStatement ps = conn.prepareStatement("select t.tid,t.tname,t.ttype,t.tprice,t.tlocation,t.tdeadline,t.tdesc from tender t inner join bids b on t.tid = b.tid where b.status = 'Pending'");
 
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 
-				int tid = rs.getInt("tid");
+				String tid = rs.getString("tid");
 				String tname = rs.getString("tname");
 				String ttype = rs.getString("ttype");
 				int tprice = rs.getInt("tprice");
 				String tlocation = rs.getString("tlocation");
+
 				java.sql.Date d = rs.getDate("tdeadline");
 				String tdeadline = d.toString();
-				String tdesc = rs.getString("tdesc");
-				String status = rs.getString("status");
 
-				TenderStatus tender = new TenderStatus(tid, tname, ttype, tprice, tlocation, tdeadline, tdesc, status);
+				String tdesc = rs.getString("tdesc");
+
+				Tender tender = new Tender(tid, tname, ttype, tprice, tlocation, tdeadline, tdesc);
 
 				tenders.add(tender);
 			}
@@ -209,33 +264,42 @@ public class TenderDaoImpl implements TenderDao {
 	}
 
 	@Override
-	public List<TenderStatus> getAllPendingTenders() throws TenderException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public List<Tender> getAllRejectedTender() throws TenderException {
+		List<Tender> tenders = new ArrayList<>();
 
-	@Override
-	public Tender getTenderById(int tid) throws TenderException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		try (Connection conn = DBUtil.provideConnection()) {
 
-	@Override
-	public Tender getTenderByName(int tname) throws TenderException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			PreparedStatement ps = conn.prepareStatement("select t.tid,t.tname,t.ttype,t.tprice,t.tlocation,t.tdeadline,t.tdesc from tender t inner join bids b on t.tid = b.tid where b.status = 'Rejected'");
 
-	@Override
-	public String removeTenderById(int tid) throws TenderException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			ResultSet rs = ps.executeQuery();
 
-	@Override
-	public String removeTenderByName(int tname) throws TenderException {
-		// TODO Auto-generated method stub
-		return null;
+			while (rs.next()) {
+
+				String tid = rs.getString("tid");
+				String tname = rs.getString("tname");
+				String ttype = rs.getString("ttype");
+				int tprice = rs.getInt("tprice");
+				String tlocation = rs.getString("tlocation");
+
+				java.sql.Date d = rs.getDate("tdeadline");
+				String tdeadline = d.toString();
+
+				String tdesc = rs.getString("tdesc");
+
+				Tender tender = new Tender(tid, tname, ttype, tprice, tlocation, tdeadline, tdesc);
+
+				tenders.add(tender);
+			}
+
+		} catch (SQLException e) {
+			throw new TenderException(e.getMessage());
+		}
+
+		if (tenders.size() == 0) {
+			throw new TenderException("Tendor not found...");
+		}
+
+		return tenders;
 	}
 
 }
