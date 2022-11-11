@@ -1,98 +1,46 @@
 package com.tendervendor.model;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class TenderStatus {
-
-	private int tid;
-	private String tname;
-	private String ttype;
-	private int tprice;
-	private String tlocation;
-	private Date tdeadline;
-	private String tdesc;
+	
+	private String tid;
+	private String bid;
+	private String vid;
 	private String status;
-
+	
 	public TenderStatus() {
 		super();
 	}
-
-	public TenderStatus(int tid, String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc, String status) {
+	
+	public TenderStatus(String tid, String bid, String vid, String status) {
 		super();
 		this.tid = tid;
-		this.tname = tname;
-		this.ttype = ttype;
-		this.tprice = tprice;
-		this.tlocation = tlocation;
-
-		Date d = null;
-		try {
-			d = new SimpleDateFormat("yyyy-mm-dd").parse(tdeadline);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		this.tdeadline = d;
-		
-		this.tdesc = tdesc;
+		this.bid = bid;
+		this.vid = vid;
 		this.status = status;
 	}
 
-	public int getTid() {
+	public String getTid() {
 		return tid;
 	}
 
-	public void setTid(int tid) {
+	public void setTid(String tid) {
 		this.tid = tid;
 	}
 
-	public String getTname() {
-		return tname;
+	public String getBid() {
+		return bid;
 	}
 
-	public void setTname(String tname) {
-		this.tname = tname;
+	public void setBid(String bid) {
+		this.bid = bid;
 	}
 
-	public String getTtype() {
-		return ttype;
+	public String getVid() {
+		return vid;
 	}
 
-	public void setTtype(String ttype) {
-		this.ttype = ttype;
-	}
-
-	public int getTprice() {
-		return tprice;
-	}
-
-	public void setTprice(int tprice) {
-		this.tprice = tprice;
-	}
-
-	public String getTlocation() {
-		return tlocation;
-	}
-
-	public void setTlocation(String tlocation) {
-		this.tlocation = tlocation;
-	}
-
-	public Date getTdeadline() {
-		return tdeadline;
-	}
-
-	public void setTdeadline(Date tdeadline) {
-		this.tdeadline = tdeadline;
-	}
-
-	public String getTdesc() {
-		return tdesc;
-	}
-
-	public void setTdesc(String tdesc) {
-		this.tdesc = tdesc;
+	public void setVid(String vid) {
+		this.vid = vid;
 	}
 
 	public String getStatus() {
@@ -105,9 +53,9 @@ public class TenderStatus {
 
 	@Override
 	public String toString() {
-		return "TenderStatus [tid=" + tid + ", tname=" + tname + ", ttype=" + ttype + ", tprice=" + tprice
-				+ ", tlocation=" + tlocation + ", tdeadline=" + tdeadline + ", tdesc=" + tdesc + ", status=" + status
-				+ "]";
+		return "TenderStatus [TenderId=" + tid + ", BidId=" + bid + ", VendorId=" + vid + ", Status=" + status + "]";
 	}
+	
+	
 
 }

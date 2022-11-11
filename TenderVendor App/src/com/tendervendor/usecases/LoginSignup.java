@@ -1,79 +1,129 @@
 package com.tendervendor.usecases;
 
 import java.sql.SQLException;
-import java.util.Scanner;
 
 import com.tendervendor.dao.LoginAndSignupDao;
 import com.tendervendor.dao.LoginAndSignupDaoImpl;
 
 public class LoginSignup {
+		
+	public static LoginAndSignupDao ls = new LoginAndSignupDaoImpl();
 	
-	public static Scanner sc = new Scanner(System.in);
 	
-	public void logSign() {
-			
-		int opt = sc.nextInt();
-		LoginAndSignupDao ls = new LoginAndSignupDaoImpl();
+	public static void menu() {
+		
+		System.out.println();
+		System.out.println("1 : Login as Admin");
+		System.out.println("2 : Login as Vendor");
+		System.out.println("3 : Don't have account signup");
+		System.out.println("4 : Exit");
+		
+		enterOption();
+		
+	}
+	
+	
+	static void enterOption() {
+		
+		int opt = Main.sc.nextInt();
 		
 		if(opt == 1) {
-			
-			System.out.println("Enter username :");
-			String name = sc.next();
-			System.out.println("Enter password");
-			String pass = sc.next();
-			String msg;
-			try {
-				msg = ls.loginAdmin(name, pass);
-				System.out.println(msg);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
+			adminLog();
 		}else if(opt == 2) {
-			
-			System.out.println("Enter username :");
-			String mail = sc.next();
-			System.out.println("Enter password :");
-			String pass = sc.next();
-			try {
-				String msg = ls.loginUser(mail, pass);
-				System.out.println(msg);
-			} catch (SQLException e) { 
-				e.printStackTrace();
-			}
-			
+			userLog();
 		}else if(opt == 3) {
-			
-			System.out.println("Enter name :");
-			String name = sc.next();
-			System.out.println("Enter email :");
-			String email = sc.next();
-			System.out.println("Enter mobile no. :");
-			String mobile = sc.next();
-			System.out.println("Enter password :");
-			String pass = sc.next();
-			System.out.println("Enter company :");
-			String company = sc.next();
-			System.out.println("Enter address :");
-			String address = sc.next();
-			
-			try {
-				String msg = ls.signupUser(name, mobile, email, pass, company, address);
-				System.out.println(msg);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
+			userSign();
 		}else if(opt == 4) {
-			
-			System.out.println("Thankyou for visiting us...");
-			return;
-			
+			System.out.println("exit...");
+			System.exit(0);
 		}else {
-			
-			System.out.println("Choose correct option...");
-			logSign();
-			
+			System.out.println("Enter correct option..");
+			enterOption();
+		}
+		
+	}
+	
+	
+	
+	static void adminLog() {
+		
+		System.out.println("Enter username :");
+		String name = Main.sc.next();
+		System.out.println("Enter password");
+		String pass = Main.sc.next();
+		try {
+			boolean flag = ls.loginAdmin(name, pass);
+			if(flag) {
+				System.out.println();
+				System.out.println("Login Successfull..." + "\n" + "Welcome :" + name);
+				System.out.println();
+				Admin.menu();
+			}else {
+				System.out.println("Wrong username or password");
+				adminLog();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	static void userLog() {
+		
+		System.out.println("Enter username :");
+		String mail = Main.sc.next();
+		System.out.println("Enter password :");
+		String pass = Main.sc.next();
+		try {
+			boolean flag = ls.loginUser(mail, pass);
+			if(flag) {
+				System.out.println();
+				System.out.println("Login Successfull..." + "\n" + "Welcome :" + mail);
+				System.out.println();
+				User.menu();
+			}else {
+				System.out.println("Wrong Email or password");
+				userLog();
+			}
+
+		} catch (SQLException e) { 
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	static void userSign() {
+		
+		System.out.println("Enter name :");
+		String name = Main.sc.next();
+		System.out.println("Enter email :");
+		String email = Main.sc.next();
+		System.out.println("Enter mobile no. :");
+		String mobile = Main.sc.next();
+		System.out.println("Enter password :");
+		String pass = Main.sc.next();
+		System.out.println("Enter company :");
+		String company = Main.sc.next();
+		System.out.println("Enter address :");
+		String address = Main.sc.next();
+		
+		try {
+			boolean flag = ls.signupUser(name, mobile, email, pass, company, address);
+			if(flag) {
+				System.out.println();
+				System.out.println("Signup Successfull..." + "\n" + "Welcome :" + name);
+				System.out.println();
+				User.menu();
+			}else {
+				System.out.println("Email already exists...");
+				userSign();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		
 	}

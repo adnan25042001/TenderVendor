@@ -2,7 +2,7 @@ package com.tendervendor.model;
 
 public class Vendor {
 	
-	private int vid;
+	private String vid;
 	private String vname;
 	private String vmob;
 	private String vemail;
@@ -14,7 +14,7 @@ public class Vendor {
 		super();
 	}
 
-	public Vendor(int vid, String vname, String vmob, String vemail, String password, String company, String address) {
+	public Vendor(String vid, String vname, String vmob, String vemail, String password, String company, String address) {
 		super();
 		this.vid = vid;
 		this.vname = vname;
@@ -25,11 +25,11 @@ public class Vendor {
 		this.address = address;
 	}
 
-	public int getVid() {
+	public String getVid() {
 		return vid;
 	}
 
-	public void setVid(int vid) {
+	public void setVid(String vid) {
 		this.vid = vid;
 	}
 
@@ -83,8 +83,8 @@ public class Vendor {
 
 	@Override
 	public String toString() {
-		return "Vendor [vid=" + vid + ", vname=" + vname + ", vmob=" + vmob + ", vemail=" + vemail + ", password="
-				+ password + ", company=" + company + ", address=" + address + "]";
+		return "Vendor [VendorId=" + vid + ", Name=" + vname + ", Mobile=" + vmob + ", Email=" + vemail + ", Password="
+				+ password + ", Company=" + company + ", Address=" + address + "]";
 	}
 
 }

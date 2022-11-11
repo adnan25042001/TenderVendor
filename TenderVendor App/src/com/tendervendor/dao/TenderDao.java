@@ -8,24 +8,20 @@ import com.tendervendor.model.TenderStatus;
 
 public interface TenderDao {
 		
-	public String addTender(Tender tender) throws TenderException;
+	public boolean addTender(Tender tender) throws TenderException;
 
-	public String addTender(String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc) throws TenderException;
+	public boolean addTender(String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc) throws TenderException;
 
 	public List<Tender> getAllTenders() throws TenderException;
 	
-	public List<TenderStatus> getAllAcceptedTenders() throws TenderException;
+	public Tender getTenderById(String tid) throws TenderException;
 	
-	public List<TenderStatus> getAllRejectedTenders() throws TenderException;
+	public boolean removeTenderById(String tid) throws TenderException;
 	
-	public List<TenderStatus> getAllPendingTenders() throws TenderException;
+	public List<TenderStatus> getAllAssignedTender() throws TenderException; 
 	
-	public Tender getTenderById(int tid) throws TenderException;
+	public List<Tender> getAllPendingTender() throws TenderException; 
 	
-	public Tender getTenderByName(int tname) throws TenderException;
-	
-	public String removeTenderById(int tid) throws TenderException;
-	
-	public String removeTenderByName(int tname) throws TenderException;
-	
+	public List<Tender> getAllRejectedTender() throws TenderException;
+
 }
