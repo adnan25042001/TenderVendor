@@ -1,28 +1,24 @@
 package com.tendervendor.usecases;
 
 import java.util.List;
-
-import com.tendervendor.dao.TenderDao;
-import com.tendervendor.dao.TenderDaoImpl;
 import com.tendervendor.exception.TenderException;
 import com.tendervendor.model.Tender;
 import com.tendervendor.model.TenderStatus;
 
 public class AdminGetTender {
 
-	public static TenderDao td = new TenderDaoImpl();
+	public static final String blue = "\u001B[36m";
+
+	public static final String reset = "\u001B[0m";
 
 	public static void menu() {
 
 		System.out.println();
-		System.out.println("1 : Get all Tender");
-		System.out.println("2 : Get Tender by Id");
-		System.out.println("3 : Get assigned Tender");
-		System.out.println("4 : Get pending Tender");
-		System.out.println("4 : Get rejected Tender");
-		System.out.println("5 : Back");
-		System.out.println("6 : Home");
-		System.out.println("7 : exit");
+		System.out.println(blue + "1 :" + reset + " Get all Tender");
+		System.out.println(blue + "2 :" + reset + " Get Tender by Id");
+		System.out.println(blue + "3 :" + reset + " Get assigned Tender");
+		System.out.println(blue + "4 :" + reset + " Back");
+		System.out.println(blue + "5 :" + reset + " exit");
 
 		enterOption();
 
@@ -30,45 +26,42 @@ public class AdminGetTender {
 
 	static void enterOption() {
 
-		int opt = Main.sc.nextInt();
+		System.out.println();
 
-		if (opt == 1) {
+		try {
 
-			getTender();
+			int opt = Integer.parseInt(Main.sc.nextLine().trim());
 
-		} else if (opt == 2) {
+			if (opt == 1) {
 
-			getTenderById();
+				getTender();
 
-		} else if (opt == 3) {
+			} else if (opt == 2) {
 
-			getAssignedTender();
+				getTenderById();
 
-		} else if (opt == 4) {
+			} else if (opt == 3) {
 
-			getPendingTender();
+				getAssignedTender();
 
-		} else if (opt == 5) {
-			
-			getRejectedTender();
+			} else if (opt == 4) {
 
-		} else if (opt == 6) {
+				System.out.println();
+				Admin.menu();
 
-			System.out.println();
-			Admin.menu();
+			} else if (opt == 5) {
 
-		} else if (opt == 7) {
+				System.out.println("exit...");
+				System.exit(0);
 
-			System.out.println();
-			Admin.menu();
+			} else {
+				System.out.println("Enter correct option...");
+				enterOption();
+			}
 
-		} else if (opt == 8) {
-
-			System.out.println("exit...");
-			System.exit(0);
-
-		} else {
+		} catch (Exception e) {
 			System.out.println("Enter correct option...");
+			enterOption();
 		}
 
 	}
@@ -77,7 +70,7 @@ public class AdminGetTender {
 
 		try {
 
-			List<Tender> tenders = td.getAllTenders();
+			List<Tender> tenders = Main.td.getAllTenders();
 
 			tenders.forEach(t -> System.out.println(t));
 
@@ -91,17 +84,17 @@ public class AdminGetTender {
 	}
 
 	static void getTenderById() {
-		
+
 		System.out.println("Enter Tender Id :");
-		String id = Main.sc.next();
+		String id = Main.sc.nextLine().trim();
 
 		try {
 
-			Tender tender = td.getTenderById(id);
+			Tender tender = Main.td.getTenderById(id);
 
-			if(tender == null) {
+			if (tender == null) {
 				System.out.println("Invalid Tender Id!");
-			}else {
+			} else {
 				System.out.println(tender);
 			}
 
@@ -118,41 +111,7 @@ public class AdminGetTender {
 
 		try {
 
-			List<TenderStatus> tenders = td.getAllAssignedTender();
-
-			tenders.forEach(t -> System.out.println(t));
-
-			menu();
-
-		} catch (TenderException e) {
-			System.out.println(e.getMessage());
-			menu();
-		}
-
-	}
-
-	static void getPendingTender() {
-
-		try {
-
-			List<Tender> tenders = td.getAllPendingTender();
-
-			tenders.forEach(t -> System.out.println(t));
-
-			menu();
-
-		} catch (TenderException e) {
-			System.out.println(e.getMessage());
-			menu();
-		}
-
-	}
-
-	static void getRejectedTender() {
-
-		try {
-
-			List<Tender> tenders = td.getAllRejectedTender();
+			List<TenderStatus> tenders = Main.td.getAllAssignedTender();
 
 			tenders.forEach(t -> System.out.println(t));
 

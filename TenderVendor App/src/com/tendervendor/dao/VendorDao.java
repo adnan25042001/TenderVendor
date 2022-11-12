@@ -1,16 +1,14 @@
 package com.tendervendor.dao;
 
-import java.util.List;
-
 import com.tendervendor.exception.VendorException;
-import com.tendervendor.model.Bid;
+import com.tendervendor.model.Vendor;
 
 public interface VendorDao {
-	
-	public boolean addVendor(String vname, String vmob, String vemail, String password, String company, String address) throws VendorException;
-	
-	public String changePassword(String email, String oldPassword, String newPassword) throws VendorException;
-	
-	public List<Bid> allBidsOfUser(int vid) throws VendorException;
-	
+
+	public boolean addVendor(Vendor vendor) throws VendorException;
+
+	public boolean changePassword(String email, String oldPassword, String newPassword) throws VendorException;
+
+	public Vendor getVender(String vid) throws VendorException;
+
 }

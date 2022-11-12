@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.tendervendor.exception.VendorException;
-import com.tendervendor.usecases.LoginSignup;
+import com.tendervendor.model.Vendor;
 import com.tendervendor.utility.DBUtil;
 
 public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
@@ -17,18 +17,27 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement("select * from admin where username = ? AND password = ?");
+			PreparedStatement ps = conn.prepareStatement("select * from admin where username = ?");
 			ps.setString(1, username);
-			ps.setString(2, password);
 
 			ResultSet rs = ps.executeQuery();
-			
+
 			if (rs.next()) {
-				flag = true;
+
+				String pass = rs.getString("password");
+
+				if (password.equals(pass)) {
+					flag = true;
+				} else {
+					throw new SQLException("Wrong Password!");
+				}
+
+			} else {
+				throw new SQLException("Wrong Userneme!");
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new SQLException(e.getMessage());
 		}
 
 		return flag;
@@ -40,47 +49,41 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement("select * from vendor where vemail = ? AND password = ?");
+			PreparedStatement ps = conn.prepareStatement("select * from vendor where vemail = ?");
 			ps.setString(1, email);
-			ps.setString(2, password);
 
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-//				String username = rs.getString("vname");
-//				msg = "Login Successfull..." + "\n" + "Welcome :" + username;
-				flag = true;
+				String pass = rs.getString("password");
+				if (password.equals(pass)) {
+					flag = true;
+				} else {
+					throw new SQLException("Wrong password!");
+				}
+			} else {
+				throw new SQLException("Wrong Email!");
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new SQLException(e.getMessage());
 		}
 
 		return flag;
 	}
 
 	@Override
-	public boolean signupUser(String name, String mobile, String email, String password, String company, String address)
-			throws SQLException {
+	public boolean signupUser(Vendor vendor) throws SQLException {
 		boolean flag = false;
-		
+
 		VendorDao vd = new VendorDaoImpl();
-		
+
 		try {
-			 flag = vd.addVendor(name, mobile, email, password, company, address);
+			flag = vd.addVendor(vendor);
 		} catch (VendorException e) {
 			e.printStackTrace();
 		}
-		
-		return flag;		
-	}
 
-	@Override
-	public void logout() {
-		
-		System.out.println("Logout successfull...");
-		
-		LoginSignup.menu();
-		
+		return flag;
 	}
 
 }
