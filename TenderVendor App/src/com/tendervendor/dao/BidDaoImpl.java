@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tendervendor.exception.BidException;
+import com.tendervendor.exception.TenderException;
 import com.tendervendor.model.Bid;
 import com.tendervendor.utility.DBUtil;
-import com.tendervendor.utility.IDUtil;
 
 public class BidDaoImpl implements BidDao {
 
 	@Override
-	public String acceptBid(String bid) throws BidException {
-		String msg = "Invalid bid Id...";
+	public boolean acceptBid(String bid) throws BidException {
+
+		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
@@ -62,7 +63,7 @@ public class BidDaoImpl implements BidDao {
 
 					if (rs1.next()) {
 
-						msg = "Bid: " + bid + " has been already assigned...";
+						throw new BidException("Bid: " + bid + " has been already assigned...");
 
 					} else {
 
@@ -91,23 +92,25 @@ public class BidDaoImpl implements BidDao {
 
 				} else {
 
-					msg = "Bid: " + bid + " with Tender: " + tid + " is already assigned to Vendor: " + vid;
+					throw new BidException(
+							"Bid: " + bid + " with Tender: " + tid + " is already assigned to Vendor: " + vid);
 
 				}
 
+			} else {
+				throw new BidException("Invalid bid Id...");
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			msg = e.getMessage();
+			throw new BidException(e.getMessage());
 		}
 
-		return msg;
+		return flag;
 	}
 
 	@Override
-	public String rejectBid(String bid) throws BidException {
-		String msg = "Invalid bid Id...";
+	public boolean rejectBid(String bid) throws BidException {
+		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
@@ -123,25 +126,27 @@ public class BidDaoImpl implements BidDao {
 				String status = rs.getString("status");
 
 				if (status.equals("Accepted")) {
-					msg = "Bid: " + bid + " with Tender: " + tid + " has been assigned to Vendor: " + vid;
+					throw new BidException(
+							"Bid: " + bid + " with Tender: " + tid + " has been assigned to Vendor: " + vid);
 				} else if (status.equals("Rejected")) {
-					msg = "Bid: " + bid + " is already rejected...";
+					throw new BidException("Bid: " + bid + " is already rejected...");
 				} else {
 					PreparedStatement ps1 = conn.prepareStatement("update bids set status = 'Rejected' where bid = ?");
 					ps1.setString(1, bid);
 					ps1.executeUpdate();
 
-					msg = "Bid : " + bid + " rejected..";
+					flag = true;
 				}
 
+			} else {
+				throw new BidException("Invalid bid Id...");
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			msg = e.getMessage();
+			throw new BidException(e.getMessage());
 		}
 
-		return msg;
+		return flag;
 	}
 
 	@Override
@@ -237,34 +242,51 @@ public class BidDaoImpl implements BidDao {
 	}
 
 	@Override
-	public String bidTender(String tid, String vid, int bidamount, String deadline) {
-		String msg = "Tender Bidding Failed!";
-		
+	public boolean bidTender(Bid bid) throws BidException, TenderException {
+
+		boolean flag = false;
+
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement("insert into tender_status(bid , tid, vid, bidamount, deadline, status) values(?,?,?,?,?,?)");
-			ps.setString(1, IDUtil.generateId());
-			ps.setString(2, tid);
-			ps.setString(3, vid);
-			ps.setInt(4, bidamount);
-			ps.setString(5, deadline);
-			ps.setString(2, "Pending");
-			
-			int n = ps.executeUpdate();
-			
-			if(n > 0)
-				msg = "You have successfully Bid for the tender";
+			PreparedStatement ps1 = conn.prepareStatement("select tid from tender where tid = ?");
+			ps1.setString(1, bid.getTid());
+
+			ResultSet rs = ps1.executeQuery();
+
+			if (rs.next()) {
+
+				PreparedStatement ps = conn.prepareStatement(
+						"insert into tender_status(bid , tid, vid, bidamount, deadline, status) values(?,?,?,?,?,?)");
+				ps.setString(1, bid.getBid());
+				ps.setString(2, bid.getTid());
+				ps.setString(3, bid.getVid());
+				ps.setInt(4, bid.getBidAmount());
+				ps.setString(5, bid.getDeadline());
+				ps.setString(2, "Pending");
+
+				int n = ps.executeUpdate();
+
+				if (n > 0) {
+					flag = true;
+				} else {
+					throw new BidException("Tender Bidding Failed!");
+				}
+
+			} else {
+
+				throw new TenderException("Invalid Tender Id!");
+
+			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			msg = e.getMessage();
+			throw new BidException(e.getMessage());
 		}
-		
-		return msg;
+
+		return flag;
 	}
 
 	@Override
-	public List<Bid> getAllBidByTendorId(String tid) throws BidException {
+	public List<Bid> getAllBidByTenderId(String tid) throws BidException {
 		List<Bid> bids = new ArrayList<>();
 
 		try (Connection conn = DBUtil.provideConnection()) {
@@ -308,6 +330,38 @@ public class BidDaoImpl implements BidDao {
 		}
 
 		return bids;
+	}
+
+	@Override
+	public Bid getBidbyBidId(String b) throws BidException {
+		Bid bid = null;
+
+		try (Connection conn = DBUtil.provideConnection()) {
+
+			PreparedStatement ps = conn.prepareStatement("select * from bids where bid = ?");
+			ps.setString(1, b);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				String tid = rs.getString("tid");
+				String vid = rs.getString("vid");
+				int bidAmount = rs.getInt("bidamount");
+				String deadline = rs.getString("deadline");
+				String status = rs.getString("status");
+
+				bid = new Bid(b, tid, vid, bidAmount, deadline, status);
+
+			} else {
+				throw new BidException("Invalid Bid Id!");
+			}
+
+		} catch (SQLException e) {
+			throw new BidException(e.getMessage());
+		}
+
+		return bid;
 	}
 
 	public static void getBid(List<Bid> bids, ResultSet rs) throws SQLException {
