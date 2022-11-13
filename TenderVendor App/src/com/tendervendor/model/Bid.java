@@ -1,12 +1,16 @@
 package com.tendervendor.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Bid {
 
 	private String bid;
 	private String tid;
 	private String vid;
 	private int bidAmount;
-	private String deadline;
+	private Date deadline;
 	private String status;
 
 	public Bid() {
@@ -19,7 +23,16 @@ public class Bid {
 		this.tid = tid;
 		this.vid = vid;
 		this.bidAmount = bidAmount;
-		this.deadline = deadline;
+
+		Date d = null;
+		try {
+			d = new SimpleDateFormat("yyyy-mm-dd").parse(deadline);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.deadline = d;
+
 		this.status = status;
 	}
 
@@ -55,12 +68,19 @@ public class Bid {
 		this.bidAmount = bidAmount;
 	}
 
-	public String getDeadline() {
+	public Date getDeadline() {
 		return deadline;
 	}
 
 	public void setDeadline(String deadline) {
-		this.deadline = deadline;
+		Date d = null;
+		try {
+			d = new SimpleDateFormat("yyyy-mm-dd").parse(deadline);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.deadline = d;
 	}
 
 	public String getStatus() {
@@ -73,8 +93,47 @@ public class Bid {
 
 	@Override
 	public String toString() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return "Bid [BidId=" + bid + ", TenderId=" + tid + ", VendorId=" + vid + ", BidAmount =" + bidAmount
-				+ ", Deadline =" + deadline + ", Status=" + status + "]";
+				+ ", Deadline =" + sdf.format(deadline) + ", Status=" + status + "]";
 	}
+
+	public static void bidHead() {
+
+		String vf = "| %-20s | %-20s | %-20s | %19s | %-19s | %-20s |%n";
+
+		bidLine();
+		System.out.format(vf, g + "Bid Id" + r, g + "Tender Id" + r, g + "Vendor Id" + r, g + "Bid Amount" + r,
+				g + "Deadline" + r, g + "Status" + r);
+		bidLine();
+
+	}
+
+	public void bidData() {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		System.out.format(bidFormat, bid, tid, vid, bidAmount, sdf.format(deadline), status);
+		bidLine();
+
+	}
+
+	public String bidFormat = "| %-11s | %-11s | %-11s | %10d | %-10s | %-11s |%n";
+
+	public static void bidLine() {
+
+		String bline = "+ %64s + %n";
+
+		String bl = "";
+		for (int i = 0; i < 79; i++) {
+			bl += "-";
+		}
+		System.out.format(bline, bl);
+
+	}
+
+	public static final String g = "\u001B[32m";
+
+	public static final String r = "\u001B[0m";
 
 }

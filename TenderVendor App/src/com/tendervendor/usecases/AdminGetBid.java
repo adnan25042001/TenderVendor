@@ -84,7 +84,10 @@ public class AdminGetBid {
 
 		try {
 			List<Bid> bids = Main.bd.getAllBids();
-			bids.forEach(b -> System.out.println(b));
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -97,7 +100,10 @@ public class AdminGetBid {
 
 		try {
 			List<Bid> bids = Main.bd.getAllAcceptedBids();
-			bids.forEach(b -> System.out.println(b));
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -110,7 +116,10 @@ public class AdminGetBid {
 
 		try {
 			List<Bid> bids = Main.bd.getAllPendingBids();
-			bids.forEach(b -> System.out.println(b));
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -123,7 +132,10 @@ public class AdminGetBid {
 
 		try {
 			List<Bid> bids = Main.bd.getAllRejectedBids();
-			bids.forEach(b -> System.out.println(b));
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -139,7 +151,10 @@ public class AdminGetBid {
 
 		try {
 			List<Bid> bids = Main.bd.getAllBidByTenderId(tid);
-			bids.forEach(b -> System.out.println(b));
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -154,7 +169,8 @@ public class AdminGetBid {
 
 		try {
 			Bid bid = Main.bd.getBidbyBidId(id);
-			System.out.println(bid);
+			Bid.bidHead();
+			bid.bidData();
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
 		} finally {

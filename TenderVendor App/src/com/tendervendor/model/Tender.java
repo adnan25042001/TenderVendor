@@ -18,7 +18,8 @@ public class Tender {
 		super();
 	}
 
-	public Tender(String tid, String tname, String ttype, int tprice, String tlocation, String tdeadline, String tdesc) {
+	public Tender(String tid, String tname, String ttype, int tprice, String tlocation, String tdeadline,
+			String tdesc) {
 		super();
 		this.tid = tid;
 		this.tname = tname;
@@ -81,8 +82,15 @@ public class Tender {
 		return tdeadline;
 	}
 
-	public void setTdeadline(Date tdeadline) {
-		this.tdeadline = tdeadline;
+	public void setTdeadline(String tdeadline) {
+		Date d = null;
+		try {
+			d = new SimpleDateFormat("yyyy-mm-dd").parse(tdeadline);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.tdeadline = d;
 	}
 
 	public String getTdesc() {
@@ -93,11 +101,42 @@ public class Tender {
 		this.tdesc = tdesc;
 	}
 
-	@Override
-	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return "Tender [TenderId=" + tid + ", Name=" + tname + ", Type=" + ttype + ", Price=" + tprice + ", Location="
-				+ tlocation + ", Deadline=" + sdf.format(tdeadline) + ", Description=" + tdesc + "]";
+	public static void tenderHead() {
+
+		String vf = "| %-20s | %-54s | %-29s | %20s | %-54s | %-21s | %-149s |%n";
+
+		tenderLine();
+		System.out.format(vf, g + "Tender Id" + r, g + "Name" + r, g + "Type" + r, g + "Price" + r, g + "Location" + r,
+				g + "Deadline" + r, g + "Description" + r);
+		tenderLine();
+
 	}
+
+	public void tenderData() {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		System.out.format(tenderFormat, tid, tname, ttype, tprice, tlocation, sdf.format(tdeadline), tdesc);
+		tenderLine();
+
+	}
+
+	public String tenderFormat = "| %-11s | %-45s | %-20s | %11d | %-45s | %-12s | %-140s |%n";
+
+	public static void tenderLine() {
+
+		String tline = "+ %284s + %n";
+
+		String tl = "";
+		for (int i = 0; i < 302; i++) {
+			tl += "-";
+		}
+		System.out.format(tline, tl);
+
+	}
+
+	public static final String g = "\u001B[32m";
+
+	public static final String r = "\u001B[0m";
 
 }

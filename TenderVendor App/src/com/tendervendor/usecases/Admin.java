@@ -149,10 +149,12 @@ public class Admin {
 			boolean flag = Main.bd.acceptBid(bid);
 			if (flag) {
 				System.out.println("Bid accepted successfully...");
-				menu();
+			}else {
+				System.out.println("Bid failed!");
 			}
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
+		}finally {
 			menu();
 		}
 
@@ -167,10 +169,10 @@ public class Admin {
 			boolean flag = Main.bd.rejectBid(bid);
 			if (flag) {
 				System.out.println("Bid rejected successfully...");
-				menu();
 			}
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
+		}finally {
 			menu();
 		}
 

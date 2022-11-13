@@ -71,13 +71,14 @@ public class AdminGetTender {
 		try {
 
 			List<Tender> tenders = Main.td.getAllTenders();
-
-			tenders.forEach(t -> System.out.println(t));
-
-			menu();
+			Tender.tenderHead();
+			tenders.forEach(t -> {
+				t.tenderData();
+			});
 
 		} catch (TenderException e) {
 			System.out.println(e.getMessage());
+		}finally {
 			menu();
 		}
 
@@ -95,7 +96,8 @@ public class AdminGetTender {
 			if (tender == null) {
 				System.out.println("Invalid Tender Id!");
 			} else {
-				System.out.println(tender);
+				Tender.tenderHead();
+				tender.tenderData();
 			}
 
 			menu();
@@ -112,8 +114,10 @@ public class AdminGetTender {
 		try {
 
 			List<TenderStatus> tenders = Main.td.getAllAssignedTender();
-
-			tenders.forEach(t -> System.out.println(t));
+			TenderStatus.tenderStatusHead();
+			tenders.forEach(t -> {
+				t.tenderStatusData();
+			});
 
 			menu();
 

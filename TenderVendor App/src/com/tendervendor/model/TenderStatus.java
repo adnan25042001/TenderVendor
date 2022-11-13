@@ -51,11 +51,39 @@ public class TenderStatus {
 		this.status = status;
 	}
 
-	@Override
-	public String toString() {
-		return "TenderStatus [TenderId=" + tid + ", BidId=" + bid + ", VendorId=" + vid + ", Status=" + status + "]";
+	public static void tenderStatusHead() {
+		
+		 String vf = "| %-20s | %-20s | %-25s | %-20s |%n";
+
+		tenderStatusLine();
+		System.out.format(vf, g+"Tender Id"+r, g+"Bid Id"+r, g+"Vendor Id"+r, g+"status"+r);
+		tenderStatusLine();
+
 	}
 	
+	public void tenderStatusData() {
+		
+		System.out.format(tenderFormat, tid, bid, vid, status);
+		tenderStatusLine();
+		
+	}
+
+	public String tenderFormat = "| %-11s | %-11s | %-16s | %-11s |%n";
+
+	public static void tenderStatusLine() {
+
+		String tsline = "+ %45s + %n";
+
+		String tsl = "";
+		for (int i = 0; i < 58; i++) {
+			tsl += "-";
+		}
+		System.out.format(tsline, tsl);
+
+	}
 	
+	public static final String g = "\u001B[32m";
+	
+	public static final String r = "\u001B[0m";
 
 }

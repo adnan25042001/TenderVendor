@@ -5,14 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.tendervendor.exception.LoginSignupException;
 import com.tendervendor.exception.VendorException;
 import com.tendervendor.model.Vendor;
+import com.tendervendor.usecases.LoginSignup;
 import com.tendervendor.utility.DBUtil;
 
 public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 
 	@Override
-	public boolean loginAdmin(String username, String password) throws SQLException {
+	public boolean loginAdmin(String username, String password) throws LoginSignupException {
 		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
@@ -37,14 +39,14 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 			}
 
 		} catch (SQLException e) {
-			throw new SQLException(e.getMessage());
+			throw new LoginSignupException(e.getMessage());
 		}
 
 		return flag;
 	}
 
 	@Override
-	public boolean loginUser(String email, String password) throws SQLException {
+	public boolean loginUser(String email, String password) throws LoginSignupException {
 		boolean flag = false;
 
 		try (Connection conn = DBUtil.provideConnection()) {
@@ -57,6 +59,7 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 				String pass = rs.getString("password");
 				if (password.equals(pass)) {
 					flag = true;
+					LoginSignup.userId = rs.getString("vid");
 				} else {
 					throw new SQLException("Wrong password!");
 				}
@@ -65,14 +68,14 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 			}
 
 		} catch (SQLException e) {
-			throw new SQLException(e.getMessage());
+			throw new LoginSignupException(e.getMessage());
 		}
 
 		return flag;
 	}
 
 	@Override
-	public boolean signupUser(Vendor vendor) throws SQLException {
+	public boolean signupUser(Vendor vendor) throws LoginSignupException {
 		boolean flag = false;
 
 		VendorDao vd = new VendorDaoImpl();
@@ -80,7 +83,7 @@ public class LoginAndSignupDaoImpl implements LoginAndSignupDao {
 		try {
 			flag = vd.addVendor(vendor);
 		} catch (VendorException e) {
-			e.printStackTrace();
+			throw new LoginSignupException(e.getMessage());
 		}
 
 		return flag;
