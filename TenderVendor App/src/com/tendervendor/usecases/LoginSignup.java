@@ -1,9 +1,9 @@
 package com.tendervendor.usecases;
 
-import java.sql.SQLException;
-
 import com.tendervendor.dao.LoginAndSignupDao;
 import com.tendervendor.dao.LoginAndSignupDaoImpl;
+import com.tendervendor.exception.LoginSignupException;
+import com.tendervendor.exception.VendorException;
 import com.tendervendor.model.Vendor;
 import com.tendervendor.utility.IDUtil;
 
@@ -12,6 +12,8 @@ public class LoginSignup {
 	public static LoginAndSignupDao ls = new LoginAndSignupDaoImpl();
 
 	public static final String blue = "\u001B[36m";
+
+	public static final String green = "\u001B[32m";
 
 	public static final String reset = "\u001B[0m";
 
@@ -68,14 +70,13 @@ public class LoginSignup {
 			boolean flag = ls.loginAdmin(name, pass);
 			if (flag) {
 				System.out.println();
-				System.out.println("Login Successfull..." + "\n" + "Welcome :" + name);
-				System.out.println();
+				System.out.println("Login Successfull..." + "\n" + green + "Welcome :" + reset + name);
 				Admin.menu();
 			} else {
 				System.out.println("Wrong username or password");
 				menu();
 			}
-		} catch (SQLException e) {
+		} catch (LoginSignupException e) {
 			System.out.println(e.getMessage());
 			menu();
 		}
@@ -84,7 +85,7 @@ public class LoginSignup {
 
 	static void userLog() {
 
-		System.out.println("Enter username:");
+		System.out.println("Enter email:");
 		String mail = Main.sc.nextLine().trim();
 		System.out.println("Enter password:");
 		String pass = Main.sc.nextLine().trim();
@@ -92,15 +93,21 @@ public class LoginSignup {
 			boolean flag = ls.loginUser(mail, pass);
 			if (flag) {
 				System.out.println();
-				System.out.println("Login Successfull..." + "\n" + "Welcome :" + mail);
-				System.out.println();
+				String name = null;
+				try {
+					Vendor profile = Main.vd.getVender(LoginSignup.userId);
+					name = profile.getVname();
+				} catch (VendorException e) {
+					System.out.println(e.getMessage());
+				} 
+				System.out.println("Login Successfull..." + "\n" + green + "Welcome :" + reset + name);
 				User.menu();
 			} else {
 				System.out.println("Wrong Email or password");
 				menu();
 			}
 
-		} catch (SQLException e) {
+		} catch (LoginSignupException e) {
 			System.out.println(e.getMessage());
 			menu();
 		}
@@ -129,13 +136,13 @@ public class LoginSignup {
 			boolean flag = ls.signupUser(vendor);
 			if (flag) {
 				System.out.println();
-				System.out.println("Signup Successfull..." + "\n" + "Welcome :" + name);
+				System.out.println("Signup Successfull..." + "\n" + green + "Welcome :" + reset + name);
 				System.out.println();
 				userId = vid;
 				User.menu();
 
-			} 
-		} catch (SQLException e) {
+			}
+		} catch (LoginSignupException e) {
 			System.out.println(e.getMessage());
 			menu();
 		}

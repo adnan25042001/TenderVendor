@@ -25,8 +25,9 @@ public class User {
 		System.out.println(blue + "3 :" + reset + " Place Bid");
 		System.out.println(blue + "4 :" + reset + " View Bid status");
 		System.out.println(blue + "5 :" + reset + " View Bid History");
-		System.out.println(blue + "6 :" + reset + " Logout");
-		System.out.println(blue + "7 :" + reset + " Exit");
+		System.out.println(blue + "6 :" + reset + " Change password");
+		System.out.println(blue + "7 :" + reset + " Logout");
+		System.out.println(blue + "8 :" + reset + " Exit");
 
 		enterOption();
 
@@ -51,6 +52,8 @@ public class User {
 			} else if (opt == 5) {
 				bidHistory();
 			} else if (opt == 6) {
+				changePass();
+			} else if (opt == 7) {
 				System.out.println("Logout successfull...");
 				LoginSignup.menu();
 			} else if (opt == 8) {
@@ -72,7 +75,8 @@ public class User {
 
 		try {
 			Vendor profile = Main.vd.getVender(LoginSignup.userId);
-			System.out.println(profile);
+			profile.vendorHead();
+			profile.vendorData();
 		} catch (VendorException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -86,7 +90,10 @@ public class User {
 		try {
 
 			List<Tender> tenders = Main.td.getAllPendingTender();
-			tenders.forEach(t -> System.out.println(t));
+			Tender.tenderHead();
+			tenders.forEach(t -> {
+				t.tenderData();
+			});
 
 		} catch (TenderException e) {
 			System.out.println(e.getMessage());
@@ -108,7 +115,7 @@ public class User {
 		System.out.println("Enter deadline:");
 		String deadline = Main.sc.nextLine().trim();
 
-		Bid bid = new Bid(b, tid, vid, amount, deadline, deadline);
+		Bid bid = new Bid(b, tid, vid, amount, deadline, null);
 
 		try {
 			boolean flag = Main.bd.bidTender(bid);
@@ -119,6 +126,7 @@ public class User {
 			}
 
 		} catch (BidException | TenderException e) {
+			e.printStackTrace();
 			System.out.println(e.getMessage());
 		} finally {
 			menu();
@@ -135,7 +143,8 @@ public class User {
 		try {
 			Bid bid = Main.bd.getBidbyBidId(b);
 			if (bid.getVid().equals(v)) {
-				System.out.println(bid);
+				Bid.bidHead();
+				bid.bidData();
 			} else {
 				System.out.println("Invalid Bid Id!");
 			}
@@ -154,12 +163,40 @@ public class User {
 		try {
 			List<Bid> bids = Main.bd.getAllBidByVendorId(vid);
 			Collections.sort(bids, (a, b) -> b.getBid().compareTo(a.getBid()));
-			bids.forEach(b -> System.out.println(b));
-
+			Bid.bidHead();
+			bids.forEach(b -> {
+				b.bidData();
+			});
 		} catch (BidException e) {
 			System.out.println(e.getMessage());
+		}finally {
+			menu();
 		}
 
+	}
+	
+	static void changePass() {
+		
+		System.out.println("Enter email:");
+		String mail = Main.sc.nextLine().trim();
+		System.out.println("Enter old password:");
+		String oldPass = Main.sc.nextLine().trim();
+		System.out.println("Enter new password:");
+		String newPass = Main.sc.nextLine().trim();
+		
+		try {
+			boolean flag = Main.vd.changePassword(mail, oldPass, newPass);
+			if(flag) {
+				System.out.println("Password changed...");
+			}else {
+				System.out.println("Password not changed!");
+			}
+		} catch (VendorException e) {
+			System.out.println(e.getMessage());
+		}finally{
+			menu();
+		}
+		
 	}
 
 }

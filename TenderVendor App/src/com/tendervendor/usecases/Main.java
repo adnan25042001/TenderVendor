@@ -27,8 +27,10 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		System.out.println(red + bgWhite + "****************  Welcome to TenderVendor App ****************" + reset);
-
+		System.out.format(red + bgWhite + "+---------------------------------------------------+%n" + reset);
+		System.out.format(red + bgWhite + "|            Welcome to TenderVendor App            |%n" + reset);
+		System.out.format(red + bgWhite + "+---------------------------------------------------+%n" + reset);
+		
 		LoginSignup.menu();
 
 	}

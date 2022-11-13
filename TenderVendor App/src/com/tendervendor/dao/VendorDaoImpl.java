@@ -62,7 +62,7 @@ public class VendorDaoImpl implements VendorDao {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 
-				PreparedStatement ps1 = conn.prepareStatement("update vendor set password = ? where vemial = ? and password = ?");
+				PreparedStatement ps1 = conn.prepareStatement("update vendor set password = ? where vemail = ? and password = ?");
 				ps1.setString(1, newPassword);
 				ps1.setString(2, email);
 				ps1.setString(3, oldPassword);

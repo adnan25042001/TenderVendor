@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.tendervendor.exception.BidException;
@@ -53,6 +54,8 @@ public class BidDaoImpl implements BidDao {
 					ps3.setString(4, "Assigned");
 
 					ps3.executeUpdate();
+					
+					flag = true;
 
 				} else if (status.equals("Rejected")) {
 
@@ -87,6 +90,8 @@ public class BidDaoImpl implements BidDao {
 						ps4.setString(4, "Assigned");
 
 						ps4.executeUpdate();
+						
+						flag = true;
 
 					}
 
@@ -256,13 +261,19 @@ public class BidDaoImpl implements BidDao {
 			if (rs.next()) {
 
 				PreparedStatement ps = conn.prepareStatement(
-						"insert into tender_status(bid , tid, vid, bidamount, deadline, status) values(?,?,?,?,?,?)");
+						"insert into bids (bid , tid, vid, bidamount, deadline, status) values(?,?,?,?,?,?)");
 				ps.setString(1, bid.getBid());
 				ps.setString(2, bid.getTid());
 				ps.setString(3, bid.getVid());
 				ps.setInt(4, bid.getBidAmount());
-				ps.setString(5, bid.getDeadline());
-				ps.setString(2, "Pending");
+
+				Date d = bid.getDeadline();
+
+				java.sql.Date sd = new java.sql.Date(d.getTime());
+
+				ps.setDate(5, sd);
+
+				ps.setString(6, "Pending");
 
 				int n = ps.executeUpdate();
 
@@ -291,7 +302,8 @@ public class BidDaoImpl implements BidDao {
 
 		try (Connection conn = DBUtil.provideConnection()) {
 
-			PreparedStatement ps = conn.prepareStatement("select * from bids where status = 'Rejected'");
+			PreparedStatement ps = conn.prepareStatement("select * from bids where tid = ?");
+			ps.setString(1, tid);
 
 			ResultSet rs = ps.executeQuery();
 
@@ -348,7 +360,8 @@ public class BidDaoImpl implements BidDao {
 				String tid = rs.getString("tid");
 				String vid = rs.getString("vid");
 				int bidAmount = rs.getInt("bidamount");
-				String deadline = rs.getString("deadline");
+				java.sql.Date sd = rs.getDate("deadline");
+				String deadline = "" + sd;
 				String status = rs.getString("status");
 
 				bid = new Bid(b, tid, vid, bidAmount, deadline, status);
@@ -372,7 +385,8 @@ public class BidDaoImpl implements BidDao {
 			String tid = rs.getString("tid");
 			String vid = rs.getString("vid");
 			int bidAmount = rs.getInt("bidamount");
-			String deadline = rs.getString("deadline");
+			java.sql.Date sd = rs.getDate("deadline");
+			String deadline = "" + sd;
 			String status = rs.getString("status");
 
 			Bid b = new Bid(bid, tid, vid, bidAmount, deadline, status);

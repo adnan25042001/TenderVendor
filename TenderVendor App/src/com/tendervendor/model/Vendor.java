@@ -1,7 +1,7 @@
 package com.tendervendor.model;
 
 public class Vendor {
-	
+
 	private String vid;
 	private String vname;
 	private String vmob;
@@ -9,12 +9,13 @@ public class Vendor {
 	private String password;
 	private String company;
 	private String address;
-	
+
 	public Vendor() {
 		super();
 	}
 
-	public Vendor(String vid, String vname, String vmob, String vemail, String password, String company, String address) {
+	public Vendor(String vid, String vname, String vmob, String vemail, String password, String company,
+			String address) {
 		super();
 		this.vid = vid;
 		this.vname = vname;
@@ -81,10 +82,40 @@ public class Vendor {
 		this.address = address;
 	}
 
-	@Override
-	public String toString() {
-		return "Vendor [VendorId=" + vid + ", Name=" + vname + ", Mobile=" + vmob + ", Email=" + vemail + ", Password="
-				+ password + ", Company=" + company + ", Address=" + address + "]";
+	public void vendorHead() {
+		
+		 String vf = "| %-20s | %-40s | %-20s | %-45s | %-30s | %-30s | %-50s |%n";
+
+		vendorLine();
+		System.out.format(vf, g+"Vendor Id"+r, g+"Vendor Name"+r, g+"Mobile"+r, g+"Email"+r, g+"Password"+r, g+"Company"+r,
+				g+"Address"+r);
+		vendorLine();
+
 	}
+	
+	public void vendorData() {
+		
+		System.out.format(vendorFormat, vid, vname, vmob, vemail, password, company, address);
+		vendorLine();
+		
+	}
+
+	public String vendorFormat = "| %-11s | %-31s | %-11s | %-36s | %-21s | %-21s | %-41s |%n";
+
+	public void vendorLine() {
+
+		String vendorLine = "+ %172s + %n";
+
+		String vline = "";
+		for (int i = 0; i < 190; i++) {
+			vline += "-";
+		}
+		System.out.format(vendorLine, vline);
+
+	}
+	
+	public static final String g = "\u001B[32m";
+	
+	public static final String r = "\u001B[0m";
 
 }
