@@ -12,12 +12,15 @@ Contractors can open a tender, evaluate a tender, compare tenders submitted and 
 
 ## Admin Features
 
-- Login into the Application
-- User Management
-- Tours/Travels Package Management
-- Route and Bus Management
-- Ticket  and Hotel Booking Management
-- View Reports 
+- Login with his account
+- View all the vendors
+- Create new tenders
+- View All the Tenders
+- View All the Bids of a tender
+- Assign Tender to a vendor
+- Update Tendor Details
+- View All the Assigned Tenders
+- View Tender by ID 
 
 
 ## User Features
