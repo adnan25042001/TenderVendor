@@ -26,8 +26,16 @@ Contractors can open a tender, evaluate a tender, compare tenders submitted and 
 ## User Features
 
 - Login as Customer
-- View Routes 
-- View  Tours/Travels  Packages
-- Book / Print / Cancel  Tickets
-- Payment  
-- Provide/View Testimonials
+- View all the current Tenders
+- Place a Bid against a Tender
+- View status of a Bid(Whether Selected or Not)
+- View his own Bid History  
+- Update Vendor Profile
+
+
+## Tech Stack
+
+- Java
+- JDBC
+- MySQL
+
