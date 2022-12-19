@@ -6,4 +6,5 @@
 
 ## About
 
-Develop and implement Online Tender Management System which is carrying out the traditional tendering process in an electronic form, referred to as E-Tendering. It provides everyone involved in the Business especially Suppliers and companies, with an efficient, secure, simple and cost-effective tool to facilitate the best use of Tender Information and to enhance their business outcomes - anywhere, anytime. A dynamic Web Application is made, using J2EE and MySQL as database. Model View Controller (MVC) architecture is used in making this application.
+Tender management system is a user friendly system, that allows the builders to checkout with the details of the tenders. In this management system builders can check the tender details, submit a tender, view results, evaluation process.
+Contractors can open a tender, evaluate a tender, compare tenders submitted and generate reports. Completion of work can also be traced from the system. This system also manages the data regarding the transaction in a very secure way.
